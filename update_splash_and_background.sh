@@ -32,9 +32,8 @@ update-alternatives --install /usr/share/plymouth/themes/default.plymouth defaul
 update-alternatives --set default.plymouth /usr/share/plymouth/themes/ubuntu-mate-logo/ubuntu-mate-logo.plymouth
 update-initramfs -u
 
-# Update the desktop background using dconf (we'll assume that it is configured correctly)
-DBUS_SESSION_BUS_ADDRESS=$(dbus-launch)
-export DBUS_SESSION_BUS_ADDRESS
+# Update the desktop background using dconf
+eval $(dbus-launch --sh-syntax)
 dconf write /org/mate/desktop/background/picture-filename "'$IMAGE_PATH'"
 
 echo "Splash screens and desktop background have been updated. Please reboot the system."
