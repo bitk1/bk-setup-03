@@ -9,7 +9,7 @@ fi
 # Define paths
 REPO_PATH="$(pwd)"
 IMAGE_PATH="$REPO_PATH/logo.png"
-PLYMOUTH_THEME_DIR="/usr/share/plymouth/themes/spinner"
+PLYMOUTH_THEME_DIR="/usr/share/plymouth/themes/ubuntu-mate-logo"
 PLYMOUTH_IMAGE_PATH="$PLYMOUTH_THEME_DIR/logo.png"
 
 # Check if the image exists
@@ -27,12 +27,12 @@ fi
 # Copy the new splash screen image to the plymouth directory
 cp $IMAGE_PATH $PLYMOUTH_IMAGE_PATH
 
-# Update the plymouth configuration to use the spinner theme
-update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/spinner/spinner.plymouth 100
-update-alternatives --set default.plymouth /usr/share/plymouth/themes/spinner/spinner.plymouth
+# Update the plymouth configuration to use the ubuntu-mate-logo theme
+update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/ubuntu-mate-logo/ubuntu-mate-logo.plymouth 100
+update-alternatives --set default.plymouth /usr/share/plymouth/themes/ubuntu-mate-logo/ubuntu-mate-logo.plymouth
 update-initramfs -u
 
-# Update the desktop background using dconf
+# Update the desktop background using dconf (we'll assume that it is configured correctly)
 DBUS_SESSION_BUS_ADDRESS=$(dbus-launch)
 export DBUS_SESSION_BUS_ADDRESS
 dconf write /org/mate/desktop/background/picture-filename "'$IMAGE_PATH'"
