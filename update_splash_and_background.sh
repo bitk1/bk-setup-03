@@ -2,8 +2,8 @@
 
 # Ensure you have necessary permissions
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   exit 1
+    echo "This script must be run as root"
+    exit 1
 fi
 
 # Define paths
@@ -36,28 +36,22 @@ update-initramfs -u
 
 # Update the desktop background using dconf
 echo "Updating desktop background settings..."
-eval $(dbus-launch --sh-syntax)
-dconf write /org/mate/desktop/background/picture-filename "'$IMAGE_PATH'"
-dconf write /org/mate/desktop/background/picture-options "'zoom'"
-dconf write /org/mate/desktop/background/primary-color "'#000000'"
+sudo -u $SUDO_USER dbus-launch --exit-with-session dconf write /org/mate/desktop/background/picture-filename "'$IMAGE_PATH'"
+sudo -u $SUDO_USER dbus-launch --exit-with-session dconf write /org/mate/desktop/background/picture-options "'zoom'"
+sudo -u $SUDO_USER dbus-launch --exit-with-session dconf write /org/mate/desktop/background/primary-color "'#000000'"
 
 echo "Verifying dconf settings..."
-dconf read /org/mate/desktop/background/picture-filename
-dconf read /org/mate/desktop/background/picture-options
-dconf read /org/mate/desktop/background/primary-color
+sudo -u $SUDO_USER dbus-launch --exit-with-session dconf read /org/mate/desktop/background/picture-filename
+sudo -u $SUDO_USER dbus-launch --exit-with-session dconf read /org/mate/desktop/background/picture-options
+sudo -u $SUDO_USER dbus-launch --exit-with-session dconf read /org/mate/desktop/background/primary-color
 
 # Attempt to restart mate-settings-daemon to apply changes
 echo "Restarting mate-settings-daemon..."
-killall mate-settings-daemon
+sudo -u $SUDO_USER killall mate-settings-daemon
 
 # Restart MATE components
 echo "Restarting MATE components..."
-mate-panel --replace &
-marco --replace &
-
-# Check if mate-settings-daemon restarted successfully
-if [ $? -ne 0 ]; then
-    echo "mate-settings-daemon failed to restart. Please log out and log back in to apply changes."
-fi
+sudo -u $SUDO_USER mate-panel --replace &
+sudo -u $SUDO_USER marco --replace &
 
 echo "Splash screens and desktop background have been updated. Please reboot the system."
