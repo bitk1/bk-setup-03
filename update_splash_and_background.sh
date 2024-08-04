@@ -35,5 +35,7 @@ update-initramfs -u
 # Update the desktop background using dconf
 eval $(dbus-launch --sh-syntax)
 dconf write /org/mate/desktop/background/picture-filename "'$IMAGE_PATH'"
+dconf write /org/mate/desktop/background/picture-options "'zoom'"
+dconf write /org/mate/desktop/background/primary-color "'#000000'"
 
 echo "Splash screens and desktop background have been updated. Please reboot the system."
