@@ -1,16 +1,16 @@
 #!/bin/bash
 
+# Ensure you have necessary permissions
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root"
+    exit 1
+fi
+
 # Define paths
 REPO_PATH="$(pwd)"
 IMAGE_PATH="$REPO_PATH/logo.png"
 PLYMOUTH_THEME_DIR="/usr/share/plymouth/themes/ubuntu-mate-logo"
 PLYMOUTH_IMAGE_PATH="$PLYMOUTH_THEME_DIR/logo.png"
-
-# Ensure the script is run as root
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   exit 1
-fi
 
 # Check if the image exists
 if [ ! -f "$IMAGE_PATH" ]; then
@@ -24,7 +24,7 @@ if [ ! -d "$PLYMOUTH_THEME_DIR" ]; then
     exit 1
 fi
 
-# Copy the new splash screen image to the Plymouth directory
+# Copy the new splash screen image to the plymouth directory
 echo "Copying splash screen image to Plymouth directory..."
 cp $IMAGE_PATH $PLYMOUTH_IMAGE_PATH
 
@@ -32,9 +32,10 @@ cp $IMAGE_PATH $PLYMOUTH_IMAGE_PATH
 echo "Updating Plymouth configuration..."
 update-initramfs -u
 
-# Update the desktop background using dconf as the regular user
-sudo -u $SUDO_USER bash <<EOF
-eval \$(dbus-launch --sh-syntax)
+# Switch to user tasks
+echo "Switching to user tasks..."
+sudo -u $SUDO_USER DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS bash <<EOF
+export DISPLAY=:0
 dconf write /org/mate/desktop/background/picture-filename "'$IMAGE_PATH'"
 dconf write /org/mate/desktop/background/picture-options "'zoom'"
 dconf write /org/mate/desktop/background/primary-color "'#000000'"
